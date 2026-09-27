@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trading Drills</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F3F5;--card:#fff;--ink:#14161A;--soft:#6B7079;--line:#E1E3E8;--up:#0A8F5A;--dn:#D6384B;--hi:#FFE45C;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#EEEFF2;}}
+:root[data-theme="dark"]{--bg:#EEEFF2;}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,sans-serif;line-height:1.45}
+main{max-width:720px;margin:0 auto;padding:22px 16px 60px}
+h1{font-weight:900;font-size:clamp(2.2rem,8vw,3.2rem);letter-spacing:-.04em;line-height:.95;margin:0}
+h1 span{background:var(--hi);padding:0 .12em}
+.lede{color:var(--soft);margin:10px 0 18px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#E4E6EA;padding:5px;border-radius:14px;margin-bottom:16px}
+.tabs button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:11px;background:transparent;color:var(--soft);cursor:pointer}
+.tabs button[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.hide{display:none!important}
+.mono{font-family:"IBM Plex Mono",monospace}
+button:focus-visible,input:focus-visible{outline:3px solid #3D7BFF;outline-offset:2px}
+.btn{font:inherit;font-weight:900;border:0;border-radius:14px;padding:14px 18px;background:var(--ink);color:#fff;cursor:pointer;font-size:1rem}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.opts{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.opts button{font:inherit;font-weight:700;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;cursor:pointer}
+.opts button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+/* sprint */
+.bar{display:flex;justify-content:space-between;align-items:center;font-weight:700;margin-bottom:12px}
+.timer{font-family:"IBM Plex Mono",monospace;font-size:1.3rem}
+.timer.low{color:var(--dn)}
+.q{font-family:"IBM Plex Mono",monospace;font-size:clamp(2.2rem,11vw,3.4rem);font-weight:600;text-align:center;margin:18px 0 10px;letter-spacing:-.02em}
+.ans{width:100%;font-family:"IBM Plex Mono",monospace;font-size:2rem;text-align:center;padding:12px;border:2px solid var(--line);border-radius:14px;background:#FAFAFB;color:var(--ink)}
+.ans.bad{border-color:var(--dn);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.row{display:flex;gap:8px;margin-top:10px}.row>*{flex:1}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat3 div{background:#F6F7F9;border-radius:12px;padding:10px;font-size:.8rem;color:var(--soft);font-weight:700}
+.stat3 b{display:block;font-family:"IBM Plex Mono",monospace;color:var(--ink);font-size:1.35rem}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:8px}
+td,th{padding:7px 4px;border-bottom:1px solid var(--line);text-align:left}
+td.r,th.r{text-align:right;font-family:"IBM Plex Mono",monospace}
+canvas#hist{width:100%;height:110px;display:block;margin-top:10px}
+/* market making */
+.scen{font-weight:900;font-size:1.25rem;margin:0}
+.sub{color:var(--soft);font-size:.92rem;margin:4px 0 14px}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.tile{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.5rem;background:#F1F2F5;border:2px dashed #CDD1D8;color:#9AA0AA}
+.tile.show{background:#fff;border:2px solid var(--ink);color:var(--ink);animation:flip .45s}
+.tile.coin{border-radius:50%;width:42px;height:42px;font-size:1.1rem}
+@keyframes flip{from{transform:rotateY(90deg)}}
+.quote{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quote label{font-size:.8rem;font-weight:700;color:var(--soft)}
+.quote .in{display:flex;align-items:center;gap:6px;margin-top:4px}
+.quote input{flex:1;min-width:0;font-family:"IBM Plex Mono",monospace;font-size:1.4rem;padding:10px;border:2px solid var(--line);border-radius:12px;text-align:center;background:#FAFAFB;color:var(--ink)}
+.quote .bid input{border-color:#BFE3D2}.quote .ask input{border-color:#F3C3CB}
+.step{font:inherit;font-weight:900;width:38px;height:44px;border-radius:10px;border:1.5px solid var(--line);background:#fff;cursor:pointer}
+.log{margin-top:14px;display:grid;gap:6px}
+.log div{background:#F6F7F9;border-radius:10px;padding:9px 12px;font-size:.92rem}
+.log .buy{border-left:4px solid var(--dn)}.log .sell{border-left:4px solid var(--up)}.log .none{border-left:4px solid #C5CAD2}
+.pnl{font-family:"IBM Plex Mono",monospace;font-weight:600}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.fv{font-size:.85rem;color:var(--soft);margin-top:8px}
+.fv button{all:unset;cursor:pointer;color:#3D7BFF;font-weight:700}
+.lesson{background:#FFFBE0;border:1px solid #F2E27A;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:.94rem}
+.err{color:var(--dn);font-weight:700;font-size:.88rem;min-height:1.2em;margin-top:6px}
+</style>
+</head>
+<body>
+<main>
+  <h1>trading <span>drills</span></h1>
+  <p class="lede">Two things trading-firm interviews test hard: fast, accurate arithmetic under a clock, and making a market when someone across the table knows more than you.</p>
+  <div class="tabs" role="tablist"><button role="tab" aria-selected="true" id="tMath">Mental math sprint</button><button role="tab" aria-selected="false" id="tMM">Market making</button></div>
+
+  <!-- ============ SPRINT ============ -->
+  <section id="math">
+    <div class="card" id="mathStart">
+      <div style="font-weight:900;font-size:1.2rem">Mental math sprint</div>
+      <p class="sub">Additions, multiplications, divisions, decimals and percentages, the mix most trading tests use. Correct answers move on by themselves. No calculators, obviously.</p>
+      <div class="opts" id="durs"><button data-d="120" aria-pressed="true">2 min</button><button data-d="300" aria-pressed="false">5 min</button><button data-d="480" aria-pressed="false">8 min</button></div>
+      <button class="btn" id="go">Start sprint</button>
+      <canvas id="hist" aria-label="Your recent sprint scores"></canvas>
+      <div class="sub" id="histNote" style="margin-top:4px"></div>
+    </div>
+    <div class="card hide" id="mathRun">
+      <div class="bar"><span id="qn">#1</span><span class="timer" id="timer">2:00</span><span id="score">0 ✓</span></div>
+      <div class="q" id="q"></div>
+      <input class="ans" id="ans" inputmode="decimal" autocomplete="off" aria-label="Your answer">
+      <div class="row"><button class="btn ghost" id="skip">Skip</button><button class="btn" id="submit">Enter</button></div>
+    </div>
+    <div class="card hide" id="mathDone">
+      <div style="font-weight:900;font-size:1.3rem">Time.</div>
+      <div class="stat3"><div>correct<b id="rC"></b></div><div>accuracy<b id="rA"></b></div><div>sec / question<b id="rS"></b></div></div>
+      <table><thead><tr><th>type</th><th class="r">right</th><th class="r">avg sec</th></tr></thead><tbody id="rT"></tbody></table>
+      <div class="row" style="margin-top:14px"><button class="btn" id="again">Go again</button></div>
+    </div>
+  </section>
+
+  <!-- ============ MARKET MAKING ============ -->
+  <section id="mm" class="hide">
+    <div class="card">
+      <div class="opts" id="scens"><button data-s="dice" aria-pressed="true">Sum of 3 dice</button><button data-s="coins" aria-pressed="false">Heads in 12 flips</button></div>
+      <p class="scen" id="scTitle"></p><p class="sub" id="scSub"></p>
+      <div class="tiles" id="tiles"></div>
+      <div id="quoteBox">
+        <div class="quote">
+          <div class="bid"><label>Your bid (you buy here)</label><div class="in"><button class="step" data-t="bid" data-d="-0.5">−</button><input id="bid" inputmode="decimal" placeholder="bid"><button class="step" data-t="bid" data-d="0.5">+</button></div></div>
+          <div class="ask"><label>Your ask (you sell here)</label><div class="in"><button class="step" data-t="ask" data-d="-0.5">−</button><input id="ask" inputmode="decimal" placeholder="ask"><button class="step" data-t="ask" data-d="0.5">+</button></div></div>
+        </div>
+        <div class="err" id="qerr"></div>
+        <button class="btn" id="quoteBtn" style="width:100%;margin-top:6px">Show quote</button>
+        <div class="fv">Stuck? <button id="fvBtn">Show fair value</button> <span id="fvOut"></span></div>
+      </div>
+      <div class="log" id="log"></div>
+      <div id="settle" class="hide"></div>
+      <button class="btn ghost hide" id="newGame" style="width:100%;margin-top:12px">New game</button>
+      <div class="fv" id="career" style="margin-top:12px"></div>
+    </div>
+    <div class="lesson"><b>The game.</b> Each round you quote a bid and an ask (at most 2 apart). The trader across from you already knows the next piece of the answer. If your price is wrong they'll trade against you, and you'll lose. Sometimes a random customer trades too. Their trade is a clue: update your quote before the next reveal.</div>
+  </section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[Math.floor(Math.random()*a.length)];
+function tab(which){const m=which==="math";$("math").classList.toggle("hide",!m);$("mm").classList.toggle("hide",m);$("tMath").setAttribute("aria-selected",m);$("tMM").setAttribute("aria-selected",!m);}
+$("tMath").onclick=()=>tab("math");$("tMM").onclick=()=>tab("mm");
+
+/* ================= mental math ================= */
+function gen(){const t=pick(["add","add","sub","mul","mul","div","dec","pct"]);let q,a;
+  if(t==="add"){const x=ri(12,999),y=ri(12,999);q=`${x} + ${y}`;a=x+y;}
+  else if(t==="sub"){let x=ri(100,999),y=ri(12,x-1);q=`${x} − ${y}`;a=x-y;}
+  else if(t==="mul"){if(Math.random()<.55){const x=ri(12,99),y=ri(3,9);q=`${x} × ${y}`;a=x*y;}else{const x=ri(11,35),y=ri(11,25);q=`${x} × ${y}`;a=x*y;}}
+  else if(t==="div"){const d=ri(3,12),x=ri(6,99);q=`${d*x} ÷ ${d}`;a=x;}
+  else if(t==="dec"){const f=pick([0.25,0.5,0.75,1.5,2.5,0.2,0.4,1.25,0.125]),n=ri(4,48)*(f===0.125?8:4);q=`${f} × ${n}`;a=+(f*n).toFixed(4);}
+  else{const p=pick([5,10,12.5,15,20,25,30,40,60,75]),n=pick([40,60,80,120,160,240,320,480,640,800]);q=`${p}% of ${n}`;a=+(p*n/100).toFixed(4);}
+  return{t,q,a};}
+const TN={add:"addition",sub:"subtraction",mul:"multiplication",div:"division",dec:"decimals",pct:"percentages"};
+let dur=120,sp=null;
+$("durs").querySelectorAll("button").forEach(b=>b.onclick=()=>{dur=+b.dataset.d;$("durs").querySelectorAll("button").forEach(q=>q.setAttribute("aria-pressed",q===b));});
+function startSprint(){sp={end:Date.now()+dur*1000,n:0,right:0,log:[],cur:null,shown:0};$("mathStart").classList.add("hide");$("mathDone").classList.add("hide");$("mathRun").classList.remove("hide");next();tickT();$("ans").focus();}
+function next(){sp.cur=gen();sp.shown=Date.now();sp.n++;$("q").textContent=sp.cur.q;$("qn").textContent="#"+sp.n;$("ans").value="";$("ans").classList.remove("bad");$("score").textContent=sp.right+" ✓";}
+function record(ok){sp.log.push({t:sp.cur.t,ok,s:(Date.now()-sp.shown)/1000});if(ok)sp.right++;}
+function check(force){if(!sp)return;const v=$("ans").value.replace(/,/g,"").replace("−","-").trim();if(v==="")return;const x=Number(v);
+  if(Math.abs(x-sp.cur.a)<1e-9){record(true);next();}else if(force){$("ans").classList.remove("bad");void $("ans").offsetWidth;$("ans").classList.add("bad");}}
+$("ans").addEventListener("input",()=>check(false));$("ans").addEventListener("keydown",e=>{if(e.key==="Enter")check(true);});
+$("submit").onclick=()=>{check(true);$("ans").focus();};$("skip").onclick=()=>{record(false);next();$("ans").focus();};
+function tickT(){if(!sp)return;const left=Math.max(0,sp.end-Date.now()),s=Math.ceil(left/1000);$("timer").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");$("timer").classList.toggle("low",s<=15);
+  if(left<=0)return finish();setTimeout(tickT,250);}
+function finish(){const L=sp.log,att=L.length,right=sp.right;$("mathRun").classList.add("hide");$("mathDone").classList.remove("hide");
+  $("rC").textContent=right;$("rA").textContent=att?Math.round(right/att*100)+"%":"–";$("rS").textContent=att?(L.reduce((a,b)=>a+b.s,0)/att).toFixed(1):"–";
+  $("rT").innerHTML=Object.keys(TN).map(k=>{const x=L.filter(l=>l.t===k);if(!x.length)return"";return`<tr><td>${TN[k]}</td><td class="r">${x.filter(l=>l.ok).length}/${x.length}</td><td class="r">${(x.reduce((a,b)=>a+b.s,0)/x.length).toFixed(1)}</td></tr>`;}).join("");
+  const h=store.get("td-hist")||[];h.push({d:dur,right,att,when:Date.now()});store.set("td-hist",h.slice(-30));sp=null;drawHist();}
+$("go").onclick=startSprint;$("again").onclick=()=>{$("mathDone").classList.add("hide");$("mathStart").classList.remove("hide");drawHist();};
+function drawHist(){const h=(store.get("td-hist")||[]).filter(x=>x.d===dur).slice(-12),c=$("hist"),r=c.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
+  if(!h.length){$("histNote").textContent="Your scores for this length will chart here.";return;}
+  const per=h.map(v=>v.right/(v.d/60)),mx=Math.max(...per,5),bw=Math.min(36,r.width/h.length-6);
+  per.forEach((v,i)=>{const bh=(v/mx)*(r.height-22),bx=i*(bw+6);x.fillStyle=i===per.length-1?"#14161A":"#CDD1D8";x.fillRect(bx,r.height-bh-16,bw,bh);x.fillStyle="#6B7079";x.font="10px 'IBM Plex Mono', monospace";x.textAlign="center";x.fillText(v.toFixed(1),bx+bw/2,r.height-3);});
+  $("histNote").textContent=`Correct answers per minute, last ${h.length} sprint${h.length>1?"s":""} at this length. Best: ${Math.max(...per).toFixed(1)}.`;}
+drawHist();
+
+/* ================= market making ================= */
+const SC={dice:{title:"Sum of three dice",sub:"Three dice are rolled face down. The contract settles at their total. One die is turned over after each round.",n:3,groups:[[0],[1],[2]],mean:3.5,roll:()=>ri(1,6),face:v=>"⚀⚁⚂⚃⚄⚅"[v-1],coin:false},
+  coins:{title:"Heads in twelve flips",sub:"Twelve coins are flipped face down. The contract settles at the number of heads. Four coins are revealed after each round.",n:12,groups:[[0,1,2,3],[4,5,6,7],[8,9,10,11]],mean:.5,roll:()=>Math.random()<.5?1:0,face:v=>v?"H":"T",coin:true}};
+let scen="dice",G=null;
+$("scens").querySelectorAll("button").forEach(b=>b.onclick=()=>{scen=b.dataset.s;$("scens").querySelectorAll("button").forEach(q=>q.setAttribute("aria-pressed",q===b));newGame();});
+function newGame(){const s=SC[scen];G={s,vals:[...Array(s.n)].map(()=>s.roll()),shown:new Set(),round:0,trades:[],quotes:[]};
+  $("scTitle").textContent=s.title;$("scSub").textContent=s.sub;$("log").innerHTML="";$("settle").classList.add("hide");$("newGame").classList.add("hide");$("quoteBox").classList.remove("hide");
+  $("bid").value="";$("ask").value="";$("fvOut").textContent="";$("qerr").textContent="";renderTiles();$("quoteBtn").textContent=`Show quote · round 1 of ${s.groups.length}`;renderCareer();}
+function renderTiles(){const s=G.s;$("tiles").innerHTML=G.vals.map((v,i)=>G.shown.has(i)?`<div class="tile show ${s.coin?"coin":""}" aria-label="revealed ${v}">${s.coin?s.face(v):v}</div>`:`<div class="tile ${s.coin?"coin":""}" aria-label="hidden">?</div>`).join("");}
+const known=()=>[...G.shown].reduce((a,i)=>a+G.vals[i],0);
+function publicFV(){return known()+(G.s.n-G.shown.size)*G.s.mean;}
+function traderFV(){const g=G.s.groups[G.round];return known()+g.reduce((a,i)=>a+G.vals[i],0)+(G.s.n-G.shown.size-g.length)*G.s.mean;}
+$("fvBtn").onclick=()=>{$("fvOut").innerHTML=`<b class="mono">${publicFV().toFixed(2)}</b> given what's been revealed. The trader knows more.`;};
+document.querySelectorAll(".step").forEach(b=>b.onclick=()=>{const el=$(b.dataset.t),v=parseFloat(el.value);el.value=((isNaN(v)?Math.round(publicFV()):v)+ +b.dataset.d).toString();});
+$("quoteBtn").onclick=()=>{
+  const bid=parseFloat($("bid").value),ask=parseFloat($("ask").value);
+  if(isNaN(bid)||isNaN(ask)){$("qerr").textContent="Enter both a bid and an ask.";return;}
+  if(ask<=bid){$("qerr").textContent="Your ask has to be above your bid.";return;}
+  if(ask-bid>2){$("qerr").textContent="Too wide: keep bid and ask within 2 of each other.";return;}
+  $("qerr").textContent="";$("fvOut").textContent="";
+  const tf=traderFV(),pf=publicFV();let side=null,who="";
+  if(tf>ask+.25){side="buy";who="The informed trader";}else if(tf<bid-.25){side="sell";who="The informed trader";}
+  else if(Math.random()<.3){side=Math.random()<.5?"buy":"sell";who="A random customer";}
+  G.quotes.push({bid,ask,pf});
+  const posNow=()=>G.trades.reduce((a,t)=>a+(t.side==="bought"?1:-1),0),posTxt=()=>{const q=posNow();return q===0?"You're flat.":`Your position: <b class="mono">${q>0?"+":""}${q}</b>.`;};
+  let msg;if(side==="buy"){G.trades.push({side:"sold",px:ask,round:G.round,informed:who.includes("informed")});msg=`<div class="buy">Round ${G.round+1}: ${who} <b>buys</b> 1 from you at <span class="mono">${ask}</span>. ${posTxt()}</div>`;}
+  else if(side==="sell"){G.trades.push({side:"bought",px:bid,round:G.round,informed:who.includes("informed")});msg=`<div class="sell">Round ${G.round+1}: ${who} <b>sells</b> 1 to you at <span class="mono">${bid}</span>. ${posTxt()}</div>`;}
+  else msg=`<div class="none">Round ${G.round+1}: nobody trades on your ${bid} / ${ask}.</div>`;
+  $("log").insertAdjacentHTML("beforeend",msg);
+  G.s.groups[G.round].forEach(i=>G.shown.add(i));setTimeout(renderTiles,350);G.round++;
+  if(G.round>=G.s.groups.length)setTimeout(settle,800);else $("quoteBtn").textContent=`Show quote · round ${G.round+1} of ${G.s.groups.length}`;
+};
+function settle(){const X=G.vals.reduce((a,b)=>a+b,0);$("quoteBox").classList.add("hide");let pnl=0;
+  const rows=G.trades.map(t=>{const p=t.side==="sold"?t.px-X:X-t.px;pnl+=p;return`<tr><td>round ${t.round+1}: you ${t.side} at ${t.px}${t.informed?" (informed)":""}</td><td class="r ${p>=0?"up":"dn"}">${p>=0?"+":""}${p.toFixed(1)}</td></tr>`;}).join("");
+  const picked=G.trades.filter(t=>t.informed).length,avgGap=G.quotes.reduce((a,q)=>a+Math.abs((q.bid+q.ask)/2-q.pf),0)/G.quotes.length;
+  let lesson=picked?`The informed trader hit you ${picked} time${picked>1?"s":""}. Each time, they knew the next reveal and your price was on the wrong side of it. The fix: widen or shade your quote toward where their trades point.`
+    :`Nobody informed could profit from your quotes. That's what a well-centred market looks like.`;
+  lesson+=` Your quotes' midpoints were on average ${avgGap.toFixed(2)} away from the public fair value.`;
+  $("settle").innerHTML=`<div style="margin-top:14px;font-weight:900;font-size:1.2rem">Settles at <span class="mono">${X}</span></div>
+    <table><tbody>${rows||'<tr><td>No trades this game.</td><td class="r">0.0</td></tr>'}<tr><td><b>Total P&amp;L</b></td><td class="r pnl ${pnl>=0?"up":"dn"}">${pnl>=0?"+":""}${pnl.toFixed(1)}</td></tr></tbody></table>
+    <div class="lesson" style="margin-top:10px">${lesson}</div>`;
+  $("settle").classList.remove("hide");$("newGame").classList.remove("hide");
+  const c=store.get("td-mm")||{games:0,pnl:0};c.games++;c.pnl+=pnl;store.set("td-mm",c);renderCareer();}
+function renderCareer(){const c=store.get("td-mm");$("career").innerHTML=c&&c.games?`Career: <b class="mono">${c.games}</b> game${c.games>1?"s":""}, total P&amp;L <b class="mono ${c.pnl>=0?"up":"dn"}">${c.pnl>=0?"+":""}${c.pnl.toFixed(1)}</b>`:"";}
+$("newGame").onclick=newGame;newGame();
+</script>
+</body>
+</html>
